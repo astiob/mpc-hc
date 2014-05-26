@@ -1328,28 +1328,8 @@ static bool LoadUUEFont(CTextFile* file)
     CString s, font;
     while (file->ReadString(s)) {
         FastTrim(s);
-        if (s.IsEmpty()) {
+        if (s.IsEmpty() || s[0] == '[') {
             break;
-        }
-        if (s[0] == '[') { // check for some standard blocks
-            if (s.Find(_T("[Script Info]")) == 0) {
-                break;
-            }
-            if (s.Find(_T("[V4+ Styles]")) == 0) {
-                break;
-            }
-            if (s.Find(_T("[V4 Styles]")) == 0) {
-                break;
-            }
-            if (s.Find(_T("[Events]")) == 0) {
-                break;
-            }
-            if (s.Find(_T("[Fonts]")) == 0) {
-                break;
-            }
-            if (s.Find(_T("[Graphics]")) == 0) {
-                break;
-            }
         }
         if (s.Find(_T("fontname:")) == 0) {
             LoadFont(font);
