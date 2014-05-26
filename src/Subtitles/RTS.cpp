@@ -1859,18 +1859,9 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
         }
 
         if (str[j] == L'(') {
-            // complex tags search
-            int br = 1; // 1 bracket
             // find the end of the parameters
-            for (jOld = ++j; str[j] && br > 0; ++j) {
-                if (str[j] == L'(') {
-                    br++;
-                } else if (str[j] == L')') {
-                    br--;
-                }
-                if (br == 0) {
-                    break;
-                }
+            for (jOld = ++j; str[j] && str[j] != L')'; ++j) {
+                ;
             }
             CStringW param = str.Mid(jOld, j - jOld);
             param.Trim();
@@ -2108,14 +2099,14 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 int k = tag.cmd - SSA_1a;
 
                 style.alpha[k] = !tag.paramsInt.IsEmpty()
-                                 ? (BYTE)CalcAnimation(tag.paramsInt[0] & 0xff, style.alpha[k], fAnimate)
+                                 ? (BYTE)CalcAnimation(tag.paramsInt[0], style.alpha[k], fAnimate)
                                  : org.alpha[k];
             }
             break;
             case SSA_alpha:
                 for (ptrdiff_t k = 0; k < 4; k++) {
                     style.alpha[k] = !tag.paramsInt.IsEmpty()
-                                     ? (BYTE)CalcAnimation(tag.paramsInt[0] & 0xff, style.alpha[k], fAnimate)
+                                     ? (BYTE)CalcAnimation(tag.paramsInt[0], style.alpha[k], fAnimate)
                                      : org.alpha[k];
                 }
                 break;
