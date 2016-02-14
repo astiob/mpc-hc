@@ -615,9 +615,7 @@ bool CPolygon::ParseStr()
             }
             const WCHAR c = *str;
             if (*str) {
-                do {
-                    str++;
-                } while (isValidAction(*str));
+                str++;
             }
             switch (c) {
                 case L'm':
