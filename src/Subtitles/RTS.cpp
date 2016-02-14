@@ -1904,11 +1904,7 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                 }
                 break;
             case SSA_an:
-            case SSA_be:
             case SSA_fe:
-            case SSA_kt:
-            case SSA_kf:
-            case SSA_ko:
                 if (cmd.GetLength() > 2) {
                     tag.paramsInt.Add(wcstol(cmd.Mid(2), nullptr, 10));
                 }
@@ -1916,7 +1912,11 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_fn:
                 tag.params.Add(cmd.Mid(2));
                 break;
+            case SSA_be:
             case SSA_fr:
+            case SSA_kt:
+            case SSA_kf:
+            case SSA_ko:
                 if (cmd.GetLength() > 2) {
                     tag.paramsReal.Add(wcstod(cmd.Mid(2), nullptr));
                 }
@@ -1927,20 +1927,24 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                     if (cmd[s] == L'+' || cmd[s] == L'-') {
                         tag.params.Add(cmd.Mid(s, 1));
                     }
-                    tag.paramsInt.Add(wcstol(cmd.Mid(s), nullptr, 10));
+                    tag.paramsReal.Add(wcstod(cmd.Mid(s), nullptr));
                 }
                 break;
             case SSA_a:
             case SSA_b:
             case SSA_i:
-            case SSA_k:
-            case SSA_K:
             case SSA_p:
             case SSA_q:
             case SSA_s:
             case SSA_u:
                 if (cmd.GetLength() > 1) {
                     tag.paramsInt.Add(wcstol(cmd.Mid(1), nullptr, 10));
+                }
+                break;
+            case SSA_k:
+            case SSA_K:
+                if (cmd.GetLength() > 1) {
+                    tag.paramsReal.Add(wcstod(cmd.Mid(1), nullptr));
                 }
                 break;
             case SSA_r:
@@ -2144,8 +2148,8 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_be:
-                style.fBlur = !tag.paramsInt.IsEmpty()
-                              ? (int)(CalcAnimation(tag.paramsInt[0], style.fBlur, fAnimate) + 0.5)
+                style.fBlur = !tag.paramsReal.IsEmpty()
+                              ? (int)(CalcAnimation(tag.paramsReal[0], style.fBlur, fAnimate) + 0.5)
                               : org.fBlur;
                 break;
             case SSA_b: {
@@ -2297,12 +2301,12 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                                     : org.fontSpacing;
                 break;
             case SSA_fs:
-                if (!tag.paramsInt.IsEmpty()) {
+                if (!tag.paramsReal.IsEmpty()) {
                     if (!tag.params.IsEmpty() && (tag.params[0][0] == L'-' || tag.params[0][0] == L'+')) {
-                        double n = CalcAnimation(style.fontSize + style.fontSize * tag.paramsInt[0] / 10, style.fontSize, fAnimate);
+                        double n = CalcAnimation(style.fontSize + style.fontSize * tag.paramsReal[0] / 10, style.fontSize, fAnimate);
                         style.fontSize = (n > 0) ? n : org.fontSize;
                     } else {
-                        double n = CalcAnimation(tag.paramsInt[0], style.fontSize, fAnimate);
+                        double n = CalcAnimation(tag.paramsReal[0], style.fontSize, fAnimate);
                         style.fontSize = (n > 0) ? n : org.fontSize;
                     }
                 } else {
@@ -2317,8 +2321,8 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
             case SSA_kt:
                 sub->m_bIsAnimated = true;
 
-                m_kstart = !tag.paramsInt.IsEmpty()
-                           ? tag.paramsInt[0] * 10
+                m_kstart = !tag.paramsReal.IsEmpty()
+                           ? std::lround(tag.paramsReal[0] * 10)
                            : 0;
                 m_kend = m_kstart;
                 break;
@@ -2328,8 +2332,8 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
 
                 m_ktype = 1;
                 m_kstart = m_kend;
-                m_kend += !tag.paramsInt.IsEmpty()
-                          ? tag.paramsInt[0] * 10
+                m_kend += !tag.paramsReal.IsEmpty()
+                          ? std::lround(tag.paramsReal[0] * 10)
                           : 1000;
                 break;
             case SSA_ko:
@@ -2337,8 +2341,8 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
 
                 m_ktype = 2;
                 m_kstart = m_kend;
-                m_kend += !tag.paramsInt.IsEmpty()
-                          ? tag.paramsInt[0] * 10
+                m_kend += !tag.paramsReal.IsEmpty()
+                          ? std::lround(tag.paramsReal[0] * 10)
                           : 1000;
                 break;
             case SSA_k:
@@ -2346,8 +2350,8 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
 
                 m_ktype = 0;
                 m_kstart = m_kend;
-                m_kend += !tag.paramsInt.IsEmpty()
-                          ? tag.paramsInt[0] * 10
+                m_kend += !tag.paramsReal.IsEmpty()
+                          ? std::lround(tag.paramsReal[0] * 10)
                           : 1000;
                 break;
             case SSA_move: // {\move(x1=param[0], y1=param[1], x2=param[2], y2=param[3][, t1=t[0], t2=t[1]])}
