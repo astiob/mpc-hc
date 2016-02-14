@@ -1846,6 +1846,14 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
 
         nTags++;
 
+        jOld = j;
+        if (str[j] == L'(') {
+            // find the end of the parameters
+            for (jOld = ++j; str[j] && str[j] != L')'; ++j) {
+                ;
+            }
+        }
+
         SSATag tag;
         tag.cmd = SSA_unknown;
         for (int cmdLength = std::min(SSA_CMD_MAX_LENGTH, cmd.GetLength()), cmdLengthMin = SSA_CMD_MIN_LENGTH; cmdLength >= cmdLengthMin; cmdLength--) {
@@ -1858,30 +1866,24 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             continue;
         }
 
-        if (str[j] == L'(') {
-            // find the end of the parameters
-            for (jOld = ++j; str[j] && str[j] != L')'; ++j) {
-                ;
-            }
-            CStringW param = str.Mid(jOld, j - jOld);
-            param.Trim();
+        CStringW param = str.Mid(jOld, j - jOld);
+        param.Trim();
 
-            while (!param.IsEmpty()) {
-                int k = param.Find(L','), l = param.Find(L'\\');
+        while (!param.IsEmpty()) {
+            int k = param.Find(L','), l = param.Find(L'\\');
 
-                if (k >= 0 && (l < 0 || k < l)) {
-                    CStringW s = param.Left(k).Trim();
-                    if (!s.IsEmpty()) {
-                        tag.params.Add(s);
-                    }
-                    param = k + 1 < param.GetLength() ? param.Mid(k + 1) : L"";
-                } else {
-                    param.Trim();
-                    if (!param.IsEmpty()) {
-                        tag.params.Add(param);
-                    }
-                    param.Empty();
+            if (k >= 0 && (l < 0 || k < l)) {
+                CStringW s = param.Left(k).Trim();
+                if (!s.IsEmpty()) {
+                    tag.params.Add(s);
                 }
+                param = k + 1 < param.GetLength() ? param.Mid(k + 1) : L"";
+            } else {
+                param.Trim();
+                if (!param.IsEmpty()) {
+                    tag.params.Add(param);
+                }
+                param.Empty();
             }
         }
 
