@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2015 see Authors.txt
+ * (C) 2006-2016 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -138,14 +138,14 @@ class CPolygon : public CWord
     bool ParseStr();
 
 protected:
-    int m_baseline;
+    double m_baseline;
 
     CPolygonPathSharedPtr m_pPolygonPath;
 
     virtual bool CreatePath();
 
 public:
-    CPolygon(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley, int baseline,
+    CPolygon(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley, double baseline,
              RenderingCaches& renderingCaches);
     CPolygon(CPolygon&); // can't use a const reference because we need to use CAtlArray::Copy which expects a non-const reference
     virtual ~CPolygon();
@@ -361,7 +361,7 @@ class __declspec(uuid("537DCACA-2812-4a4f-B2C6-1A34C17ADEB0"))
     double m_animAccel;
     int m_ktype, m_kstart, m_kend;
     int m_nPolygon;
-    int m_polygonBaselineOffset;
+    double m_polygonBaselineOffset;
     STSStyle m_styleOverride; // the app can decide to use this style instead of a built-in one
     bool m_bOverrideStyle;
     bool m_bOverridePlacement;
