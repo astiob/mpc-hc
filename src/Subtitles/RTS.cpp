@@ -1918,7 +1918,6 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_fr:
             case SSA_fscx:
             case SSA_fscy:
-            case SSA_fsc:
             case SSA_fsp:
             case SSA_fs:
             case SSA_i:
@@ -1945,6 +1944,7 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_clip:
             case SSA_iclip:
             case SSA_fade:
+            case SSA_fsc:
             case SSA_move:
             case SSA_org:
             case SSA_pos:
@@ -1995,7 +1995,6 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_fr:
             case SSA_fscx:
             case SSA_fscy:
-            case SSA_fsc:
             case SSA_fsp:
             case SSA_kt:
             case SSA_kf:
@@ -2013,6 +2012,7 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                 }
                 break;
             case SSA_fn:
+            case SSA_fsc:
             case SSA_r:
                 break;
             case SSA_fs:
