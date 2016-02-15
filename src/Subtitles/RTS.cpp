@@ -1885,6 +1885,7 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             }
         }
 
+        // Add the inline parameter if necessary
         switch (tag.cmd) {
             case SSA_1c:
             case SSA_2c:
@@ -1895,56 +1896,40 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_3a:
             case SSA_4a:
                 if (cmd.GetLength() > 2) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(2).Trim(L"&H"), nullptr, 16));
+                    tag.params.Add(cmd.Mid(2).Trim(L"&H"));
                 }
                 break;
             case SSA_alpha:
                 if (cmd.GetLength() > 5) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(5).Trim(L"&H"), nullptr, 16));
+                    tag.params.Add(cmd.Mid(5).Trim(L"&H"));
                 }
                 break;
             case SSA_an:
+            case SSA_be:
             case SSA_fe:
+            case SSA_fr:
+            case SSA_fs:
+            case SSA_kt:
+            case SSA_kf:
+            case SSA_ko:
                 if (cmd.GetLength() > 2) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(2), nullptr, 10));
+                    tag.params.Add(cmd.Mid(2));
                 }
                 break;
             case SSA_fn:
                 tag.params.Add(cmd.Mid(2));
                 break;
-            case SSA_be:
-            case SSA_fr:
-            case SSA_kt:
-            case SSA_kf:
-            case SSA_ko:
-                if (cmd.GetLength() > 2) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(2), nullptr));
-                }
-                break;
-            case SSA_fs:
-                if (cmd.GetLength() > 2) {
-                    int s = 2;
-                    if (cmd[s] == L'+' || cmd[s] == L'-') {
-                        tag.params.Add(cmd.Mid(s, 1));
-                    }
-                    tag.paramsReal.Add(wcstod(cmd.Mid(s), nullptr));
-                }
-                break;
             case SSA_a:
             case SSA_b:
             case SSA_i:
+            case SSA_K:
+            case SSA_k:
             case SSA_p:
             case SSA_q:
             case SSA_s:
             case SSA_u:
                 if (cmd.GetLength() > 1) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(1), nullptr, 10));
-                }
-                break;
-            case SSA_k:
-            case SSA_K:
-                if (cmd.GetLength() > 1) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(1), nullptr));
+                    tag.params.Add(cmd.Mid(1));
                 }
                 break;
             case SSA_r:
@@ -1956,7 +1941,115 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_fscy:
             case SSA_shad:
                 if (cmd.GetLength() > 4) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(4), nullptr));
+                    tag.params.Add(cmd.Mid(4));
+                }
+                break;
+            case SSA_clip:
+            case SSA_iclip:
+            case SSA_fade:
+            case SSA_move:
+            case SSA_org:
+            case SSA_pos:
+            case SSA_t:
+                break;
+            case SSA_c:
+                if (cmd.GetLength() > 1) {
+                    tag.params.Add(cmd.Mid(1).Trim(L"&H"));
+                }
+                break;
+            case SSA_fax:
+            case SSA_fay:
+            case SSA_frx:
+            case SSA_fry:
+            case SSA_frz:
+            case SSA_fsc:
+            case SSA_fsp:
+            case SSA_pbo:
+                if (cmd.GetLength() > 3) {
+                    tag.params.Add(cmd.Mid(3));
+                }
+                break;
+            case SSA_xbord:
+            case SSA_xshad:
+            case SSA_ybord:
+            case SSA_yshad:
+                if (cmd.GetLength() > 5) {
+                    tag.params.Add(cmd.Mid(5));
+                }
+                break;
+        }
+
+        // Parse the parameters
+        switch (tag.cmd) {
+            case SSA_1c:
+            case SSA_2c:
+            case SSA_3c:
+            case SSA_4c:
+            case SSA_1a:
+            case SSA_2a:
+            case SSA_3a:
+            case SSA_4a:
+            case SSA_alpha:
+            case SSA_c:
+                if (!tag.params.IsEmpty()) {
+                    tag.paramsInt.Add(wcstol(tag.params[0], nullptr, 16));
+                    tag.params.RemoveAll();
+                }
+                break;
+            case SSA_an:
+            case SSA_a:
+            case SSA_b:
+            case SSA_fe:
+            case SSA_i:
+            case SSA_pbo:
+            case SSA_p:
+            case SSA_q:
+            case SSA_s:
+            case SSA_u:
+                if (!tag.params.IsEmpty()) {
+                    tag.paramsInt.Add(wcstol(tag.params[0], nullptr, 10));
+                    tag.params.RemoveAll();
+                }
+                break;
+            case SSA_blur:
+            case SSA_bord:
+            case SSA_be:
+            case SSA_fax:
+            case SSA_fay:
+            case SSA_frx:
+            case SSA_fry:
+            case SSA_frz:
+            case SSA_fr:
+            case SSA_fscx:
+            case SSA_fscy:
+            case SSA_fsc:
+            case SSA_fsp:
+            case SSA_kt:
+            case SSA_kf:
+            case SSA_K:
+            case SSA_ko:
+            case SSA_k:
+            case SSA_shad:
+            case SSA_xbord:
+            case SSA_xshad:
+            case SSA_ybord:
+            case SSA_yshad:
+                if (!tag.params.IsEmpty()) {
+                    tag.paramsReal.Add(wcstod(tag.params[0], nullptr));
+                    tag.params.RemoveAll();
+                }
+                break;
+            case SSA_fn:
+            case SSA_r:
+                break;
+            case SSA_fs:
+                if (!tag.params.IsEmpty()) {
+                    WCHAR sign = tag.params[0][0];
+                    tag.paramsReal.Add(wcstod(tag.params[0], nullptr));
+                    tag.params.RemoveAll();
+                    if (sign == L'+' || sign == L'-') {
+                        tag.params.Add(sign);
+                    }
                 }
                 break;
             case SSA_clip:
@@ -2007,27 +2100,6 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                 }
             }
             break;
-            case SSA_c:
-                if (cmd.GetLength() > 1) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(1).Trim(L"&H"), nullptr, 16));
-                }
-                break;
-            case SSA_frx:
-            case SSA_fry:
-            case SSA_frz:
-            case SSA_fax:
-            case SSA_fay:
-            case SSA_fsc:
-            case SSA_fsp:
-                if (cmd.GetLength() > 3) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(3), nullptr));
-                }
-                break;
-            case SSA_pbo:
-                if (cmd.GetLength() > 3) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(3), nullptr, 10));
-                }
-                break;
             case SSA_t: {
                 size_t nParams = tag.params.GetCount();
                 if (nParams >= 1 && nParams <= 4) {
@@ -2047,14 +2119,6 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                 tag.params.RemoveAll();
             }
             break;
-            case SSA_xbord:
-            case SSA_xshad:
-            case SSA_ybord:
-            case SSA_yshad:
-                if (cmd.GetLength() > 5) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(5), nullptr));
-                }
-                break;
         }
 
         tagsList->AddTail(tag);
