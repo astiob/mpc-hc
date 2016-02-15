@@ -533,7 +533,7 @@ bool CText::CreatePath()
 
 // CPolygon
 
-CPolygon::CPolygon(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley, int baseline,
+CPolygon::CPolygon(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley, double baseline,
                    RenderingCaches& renderingCaches)
     : CWord(style, str, ktype, kstart, kend, scalex, scaley, renderingCaches)
     , m_baseline(baseline)
@@ -1974,7 +1974,6 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_b:
             case SSA_fe:
             case SSA_i:
-            case SSA_pbo:
             case SSA_p:
             case SSA_q:
             case SSA_s:
@@ -2001,6 +2000,7 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_K:
             case SSA_ko:
             case SSA_k:
+            case SSA_pbo:
             case SSA_shad:
             case SSA_xbord:
             case SSA_xshad:
@@ -2440,7 +2440,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_pbo:
-                m_polygonBaselineOffset = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : 0;
+                m_polygonBaselineOffset = !tag.paramsReal.IsEmpty() ? tag.paramsReal[0] : 0;
                 break;
             case SSA_pos:
                 if (tag.paramsReal.GetCount() == 2 && !sub->m_effects[EF_MOVE]) {
