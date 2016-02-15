@@ -1897,11 +1897,13 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_3a:
             case SSA_4a:
             case SSA_alpha:
-            case SSA_c:
-                if (cmd.GetLength() > cmdLength) {
-                    tag.params.Add(cmd.Mid(cmdLength).Trim(L"&H"));
+            case SSA_c: {
+                CStringW param = cmd.Mid(cmdLength).Trim(L"&H");
+                if (!param.IsEmpty()) {
+                    tag.params.Add(param);
                 }
-                break;
+            }
+            break;
             case SSA_an:
             case SSA_a:
             case SSA_blur:
