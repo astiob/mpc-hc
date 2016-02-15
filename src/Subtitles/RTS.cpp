@@ -1854,7 +1854,8 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
 
         SSATag tag;
         tag.cmd = SSA_unknown;
-        for (int cmdLength = std::min(SSA_CMD_MAX_LENGTH, cmd.GetLength()), cmdLengthMin = SSA_CMD_MIN_LENGTH; cmdLength >= cmdLengthMin; cmdLength--) {
+        int cmdLength;
+        for (cmdLength = std::min(SSA_CMD_MAX_LENGTH, cmd.GetLength()); cmdLength >= SSA_CMD_MIN_LENGTH; cmdLength--) {
             if (s_SSATagCmds.Lookup(cmd.Left(cmdLength), tag.cmd)) {
                 break;
             }
@@ -1895,54 +1896,53 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_2a:
             case SSA_3a:
             case SSA_4a:
-                if (cmd.GetLength() > 2) {
-                    tag.params.Add(cmd.Mid(2).Trim(L"&H"));
-                }
-                break;
             case SSA_alpha:
-                if (cmd.GetLength() > 5) {
-                    tag.params.Add(cmd.Mid(5).Trim(L"&H"));
+            case SSA_c:
+                if (cmd.GetLength() > cmdLength) {
+                    tag.params.Add(cmd.Mid(cmdLength).Trim(L"&H"));
                 }
                 break;
             case SSA_an:
+            case SSA_a:
+            case SSA_blur:
+            case SSA_bord:
             case SSA_be:
+            case SSA_b:
+            case SSA_fax:
+            case SSA_fay:
             case SSA_fe:
+            case SSA_frx:
+            case SSA_fry:
+            case SSA_frz:
             case SSA_fr:
+            case SSA_fscx:
+            case SSA_fscy:
+            case SSA_fsc:
+            case SSA_fsp:
             case SSA_fs:
+            case SSA_i:
             case SSA_kt:
             case SSA_kf:
-            case SSA_ko:
-                if (cmd.GetLength() > 2) {
-                    tag.params.Add(cmd.Mid(2));
-                }
-                break;
-            case SSA_fn:
-                tag.params.Add(cmd.Mid(2));
-                break;
-            case SSA_a:
-            case SSA_b:
-            case SSA_i:
             case SSA_K:
+            case SSA_ko:
             case SSA_k:
             case SSA_p:
             case SSA_q:
+            case SSA_shad:
             case SSA_s:
             case SSA_u:
-                if (cmd.GetLength() > 1) {
-                    tag.params.Add(cmd.Mid(1));
+            case SSA_pbo:
+            case SSA_xbord:
+            case SSA_xshad:
+            case SSA_ybord:
+            case SSA_yshad:
+                if (cmd.GetLength() > cmdLength) {
+                    tag.params.Add(cmd.Mid(cmdLength));
                 }
                 break;
+            case SSA_fn:
             case SSA_r:
-                tag.params.Add(cmd.Mid(1));
-                break;
-            case SSA_blur:
-            case SSA_bord:
-            case SSA_fscx:
-            case SSA_fscy:
-            case SSA_shad:
-                if (cmd.GetLength() > 4) {
-                    tag.params.Add(cmd.Mid(4));
-                }
+                tag.params.Add(cmd.Mid(cmdLength));
                 break;
             case SSA_clip:
             case SSA_iclip:
@@ -1951,31 +1951,6 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_org:
             case SSA_pos:
             case SSA_t:
-                break;
-            case SSA_c:
-                if (cmd.GetLength() > 1) {
-                    tag.params.Add(cmd.Mid(1).Trim(L"&H"));
-                }
-                break;
-            case SSA_fax:
-            case SSA_fay:
-            case SSA_frx:
-            case SSA_fry:
-            case SSA_frz:
-            case SSA_fsc:
-            case SSA_fsp:
-            case SSA_pbo:
-                if (cmd.GetLength() > 3) {
-                    tag.params.Add(cmd.Mid(3));
-                }
-                break;
-            case SSA_xbord:
-            case SSA_xshad:
-            case SSA_ybord:
-            case SSA_yshad:
-                if (cmd.GetLength() > 5) {
-                    tag.params.Add(cmd.Mid(5));
-                }
                 break;
         }
 
