@@ -578,11 +578,11 @@ bool CPolygon::GetPOINT(LPCWSTR& str, POINT& point) const
     LPWSTR xEnd = nullptr;
     LPWSTR yEnd = nullptr;
 
-    point.x = std::lround(wcstod(str, &xEnd) * m_scalex * 64.0);
+    point.x = (int) (wcstod(str, &xEnd) * 64.0);
     if (xEnd <= str) {
         return false;
     }
-    point.y = std::lround(wcstod(xEnd, &yEnd) * m_scaley * 64.0);
+    point.y = (int) (wcstod(xEnd, &yEnd) * 64.0);
 
     bool ret = yEnd > xEnd;
     str = yEnd;
@@ -715,6 +715,8 @@ bool CPolygon::ParseStr()
         int minx = INT_MAX, miny = INT_MAX, maxx = INT_MIN, maxy = INT_MIN;
 
         for (size_t m = 0; m < m_pPolygonPath->typesOrg.GetCount(); m++) {
+            m_pathPointsOrg[m].x = std::lround(m_scalex * m_pathPointsOrg[m].x);
+            m_pathPointsOrg[m].y = std::lround(m_scaley * m_pathPointsOrg[m].y);
             if (minx > m_pPolygonPath->pointsOrg[m].x) {
                 minx = m_pPolygonPath->pointsOrg[m].x;
             }
