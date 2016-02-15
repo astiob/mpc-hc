@@ -2028,7 +2028,9 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_clip:
             case SSA_iclip: {
                 size_t nParams = tag.params.GetCount();
-                if (nParams == 2) {
+                if (nParams == 1) {
+                    ;
+                } else if (nParams == 2) {
                     tag.paramsInt.Add(wcstol(tag.params[0], nullptr, 10));
                     tag.params.RemoveAt(0);
                 } else if (nParams == 4) {
@@ -2036,6 +2038,8 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                         tag.paramsInt.Add(wcstol(tag.params[n], nullptr, 10));
                     }
                     tag.params.RemoveAll();
+                } else {
+                    continue;
                 }
             }
             break;
@@ -2046,6 +2050,8 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                         tag.paramsInt.Add(wcstol(tag.params[n], nullptr, 10));
                     }
                     tag.params.RemoveAll();
+                } else {
+                    continue;
                 }
             }
             break;
@@ -2059,6 +2065,8 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                         tag.paramsInt.Add(wcstol(tag.params[n], nullptr, 10));
                     }
                     tag.params.RemoveAll();
+                } else {
+                    continue;
                 }
             }
             break;
@@ -2070,6 +2078,8 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                         tag.paramsReal.Add(wcstod(tag.params[n], nullptr));
                     }
                     tag.params.RemoveAll();
+                } else {
+                    continue;
                 }
             }
             break;
@@ -2088,8 +2098,10 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                     }
 
                     ParseSSATag(tag.subTagsList, tag.params[nParams - 1]);
+                    tag.params.RemoveAll();
+                } else {
+                    continue;
                 }
-                tag.params.RemoveAll();
             }
             break;
         }
