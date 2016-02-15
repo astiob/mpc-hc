@@ -1911,6 +1911,7 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_fax:
             case SSA_fay:
             case SSA_fe:
+            case SSA_fn:
             case SSA_frx:
             case SSA_fry:
             case SSA_frz:
@@ -1928,6 +1929,7 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_k:
             case SSA_p:
             case SSA_q:
+            case SSA_r:
             case SSA_shad:
             case SSA_s:
             case SSA_u:
@@ -1939,10 +1941,6 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                 if (cmd.GetLength() > cmdLength) {
                     tag.params.Add(cmd.Mid(cmdLength));
                 }
-                break;
-            case SSA_fn:
-            case SSA_r:
-                tag.params.Add(cmd.Mid(cmdLength));
                 break;
             case SSA_clip:
             case SSA_iclip:
@@ -2294,7 +2292,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                                 : org.charSet;
                 break;
             case SSA_fn:
-                style.fontName = (!tag.params.IsEmpty() && !tag.params[0].IsEmpty() && tag.params[0] != L"0")
+                style.fontName = (!tag.params.IsEmpty() && tag.params[0] != L"0")
                                  ? CString(tag.params[0]).Trim()
                                  : org.fontName;
                 break;
@@ -2456,7 +2454,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
             }
             break;
             case SSA_r:
-                if (tag.params[0].IsEmpty() || !GetStyle(tag.params[0], style)) {
+                if (tag.params.IsEmpty() || !GetStyle(tag.params[0], style)) {
                     style = org;
                 }
                 break;
